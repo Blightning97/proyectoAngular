@@ -1,0 +1,48 @@
+/*
+Script de las tablas del proyecto clinica dental en Angular
+*/
+
+SET FOREIGN_KEY_CHECKS=0;
+-- ----------------------------
+-- Table structure for usuario
+-- ----------------------------
+CREATE TABLE `usuario` (
+  `Cedula` int(9) NOT NULL,
+  `TipoUsuario` varchar(25) NOT NULL,
+  `Correo` varchar(50) DEFAULT NULL,
+  `Usuario` varchar(15) NOT NULL,
+  `Contrasenna` varchar(15) NOT NULL,
+  `Fecha_Nacimiento` date NOT NULL,
+  `Expediente_Clinico` varchar(1000) DEFAULT NULL,
+  `Nombre` varchar(50) NOT NULL,
+  `Apellido1` varchar(50) NOT NULL,
+  `Apellido2` varchar(50) NOT NULL,
+  `Telefono` int(15) NULL,
+  `Clinica_Id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`Cedula`),
+  KEY `FK_Clinica_Id` (`Clinica_Id`) USING BTREE,
+  CONSTRAINT `FK_Clinica_Id` FOREIGN KEY (`Clinica_Id`) REFERENCES `clinica` (`Id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+
+-- ---------------------------------------
+-- Table structure for tipo usuario
+-- ---------------------------------------
+CREATE TABLE `tipo_usuario` (
+`Id_Tipo_Usuario` int(10) unsigned NOT NULL AUTO_INCREMENT,
+`Tipo_Usuario` varchar(25) NOT NULL,
+  PRIMARY KEY (`Id_Tipo_Usuario`),
+  KEY `Tipo_Usuario` (`Tipo_Usuario`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for clinica
+-- ----------------------------
+CREATE TABLE `clinica` (
+  `Id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `Nombre` varchar(30) DEFAULT NULL,
+  `Ubicacion` varchar(300) NOT NULL,
+  `Telefono` int(15) DEFAULT NULL,
+  `Activo` tinyint(4) DEFAULT '1',
+  `Eliminado` tinyint(4) DEFAULT '0',
+  PRIMARY KEY (`Id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
