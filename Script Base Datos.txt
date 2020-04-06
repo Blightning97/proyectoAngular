@@ -1,5 +1,7 @@
 /*
 Script de las tablas del proyecto clinica dental en Angular
+Jason Zamora Trejos
+Versión 1
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -18,11 +20,12 @@ CREATE TABLE `usuario` (
   `Apellido1` varchar(50) NOT NULL,
   `Apellido2` varchar(50) NOT NULL,
   `Telefono` int(15) NULL,
+	
   `Clinica_Id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`Cedula`),
   KEY `FK_Clinica_Id` (`Clinica_Id`) USING BTREE,
   CONSTRAINT `FK_Clinica_Id` FOREIGN KEY (`Clinica_Id`) REFERENCES `clinica` (`Id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
 
 -- ---------------------------------------
 -- Table structure for tipo usuario
@@ -32,7 +35,7 @@ CREATE TABLE `tipo_usuario` (
 `Tipo_Usuario` varchar(25) NOT NULL,
   PRIMARY KEY (`Id_Tipo_Usuario`),
   KEY `Tipo_Usuario` (`Tipo_Usuario`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for clinica
@@ -45,4 +48,71 @@ CREATE TABLE `clinica` (
   `Activo` tinyint(4) DEFAULT '1',
   `Eliminado` tinyint(4) DEFAULT '0',
   PRIMARY KEY (`Id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+
+
+-- ----------------------------
+-- Table structure for cita
+-- ----------------------------
+CREATE TABLE `cita` (
+  `Id_Cita` int(255) unsigned NOT NULL AUTO_INCREMENT,
+  `Cedula_Paciente` int(9) NOT NULL,
+  `Id_Clinica` int(10) unsigned NOT NULL,
+  `Fecha_Hora` date NOT NULL,
+  `Motivo` varchar(800) DEFAULT NULL,
+  `Pago` double(8,0) unsigned NOT NULL DEFAULT '0',
+  `Observaciones_Dentista` varchar(800) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT 'Atendido',
+  `Atendido` binary(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`Id_Cita`),
+  KEY `FK_Cedula_Paciente_Cita` (`Cedula_Paciente`) USING BTREE,
+  KEY `FK_Clinica_Id_Cita` (`Id_Clinica`) USING BTREE,
+  KEY `Pago` (`Pago`),
+  CONSTRAINT `FK_Cedula_Paciente_Cita` FOREIGN KEY (`Cedula_Paciente`) REFERENCES `usuario` (`Cedula`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `FK_Clinica_Id_Cita` FOREIGN KEY (`Id_Clinica`) REFERENCES `clinica` (`Id`) ON DELETE NO ACTION ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+
+-- ----------------------------
+-- Table structure for especialidad
+-- ----------------------------
+CREATE TABLE `especialidad` (
+  `Id_especialidad` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `Nombre_especialidad` varchar(30) NOT NULL,
+  PRIMARY KEY (`Id_especialidad`),
+  KEY `Nombre_especialidad` (`Nombre_especialidad`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for especialidad_dentista
+-- ----------------------------
+CREATE TABLE `especialidad_dentista` (
+  `Cedula_dentista` int(12) NOT NULL,
+  `Id_especialidad` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`Cedula_dentista`,`Id_especialidad`),
+  KEY `Id_especialidad` (`Id_especialidad`),
+  CONSTRAINT `especialidad_dentista_ibfk_2` FOREIGN KEY (`Id_especialidad`) REFERENCES `especialidad` (`Id_especialidad`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `FK_Cedula_Dentista` FOREIGN KEY (`Cedula_dentista`) REFERENCES `usuario` (`Cedula`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for trabaja_en
+-- ----------------------------
+CREATE TABLE `trabaja_en` (
+  `Clinica_Id` int(10) unsigned NOT NULL,
+  `Cedula_Dentista` int(9) NOT NULL,
+  PRIMARY KEY (`Clinica_Id`,`Cedula_Dentista`),
+  KEY `FK_Dentista_Trabaja_En` (`Cedula_Dentista`) USING BTREE,
+  CONSTRAINT `FK_Clinica_Trabaja_En` FOREIGN KEY (`Clinica_Id`) REFERENCES `clinica` (`Id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `FK_Dentista_Trabaja_En` FOREIGN KEY (`Cedula_Dentista`) REFERENCES `usuario` (`Cedula`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+
+-- ----------------------------
+-- Table structure for atiende_cita
+-- ----------------------------
+CREATE TABLE `atiende_cita` (
+  `Cedula_Dentista` int(9) NOT NULL,
+  `Cita_Id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`Cedula_Dentista`),
+  KEY `FK_CitaID_Atiende` (`Cita_Id`) USING BTREE,
+  CONSTRAINT `FK_Ced_Dentista_Atiende` FOREIGN KEY (`Cedula_Dentista`) REFERENCES `usuario` (`Cedula`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `FK_CitaID_Atiende` FOREIGN KEY (`Cita_Id`) REFERENCES `cita` (`Id_Cita`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
