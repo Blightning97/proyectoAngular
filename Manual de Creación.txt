@@ -1,0 +1,4 @@
+Manual de cómo hice el proyecto en angular.
+
+Use Navicat para usar una base MySQL
+https://developer.okta.com/blog/2019/08/16/angular-mysql-express
